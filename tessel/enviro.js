@@ -1,13 +1,14 @@
 var http = require('http');
 var tessel = require('tessel');
-var climatelib = require('climate-si7005');
+var climatelib = require('climate-si7020');
 
 var climate = climatelib.use(tessel.port['B']);
 
 var options = {
-	hostname: 'tesseltest.meteor.com',
-  path: '/api/points',
-  method: 'POST'
+	hostname: '10.0.1.41',
+	port: '3000',
+    path: '/api/points',
+    method: 'POST'
 };
 
 var now;
@@ -20,7 +21,7 @@ enviro();
 
 function enviro(){
 	climate.on('ready', function () {
-		console.log('Connected to si7005');  
+		console.log('Connected to si7020');  
 		setInterval(function() {
 			climate.readTemperature('f', function (err, temp) {
 				climate.readHumidity(function (err, humid) {
@@ -36,6 +37,7 @@ function enviro(){
 
 					req.on('error', function(e) {
 						console.log('problem with request: ' + e.message);
+						// console.log(e)
 						setTimeout(enviro, 5000);
 					});
 
@@ -53,6 +55,6 @@ function enviro(){
 					req.end();
 				});
 			});
-		}, 7000);
+		}, 600000);
 	});
 };
